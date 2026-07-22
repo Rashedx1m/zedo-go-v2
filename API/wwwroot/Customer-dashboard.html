@@ -1,0 +1,347 @@
+﻿<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ZedoGo - لوحة تحكم العميل</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800&family=Cairo:wght@600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    />
+    <link rel="stylesheet" href="css/Customer.css" />
+
+    <!-- ✅ أنماط بطاقة السائق -->
+    <style>
+      .driver-card {
+        display: none;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 12px;
+        padding: 16px;
+        margin-top: 12px;
+        animation: slideIn 0.3s ease;
+      }
+
+      .driver-card.show {
+        display: block;
+      }
+
+      @keyframes slideIn {
+        from {
+          opacity: 0;
+          transform: translateY(-10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .driver-card .driver-header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 12px;
+      }
+
+      .driver-card .driver-avatar {
+        width: 50px;
+        height: 50px;
+        background: linear-gradient(135deg, #00d68f, #00b377);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 20px;
+        font-weight: bold;
+        color: white;
+      }
+
+      .driver-card .driver-details h4 {
+        margin: 0;
+        font-size: 16px;
+        color: white;
+      }
+
+      .driver-card .driver-rating {
+        font-size: 14px;
+        color: #ffd700;
+        margin-top: 4px;
+      }
+
+      .driver-card .vehicle-info {
+        background: rgba(0, 0, 0, 0.2);
+        padding: 8px 12px;
+        border-radius: 8px;
+        margin-bottom: 12px;
+        display: flex;
+        justify-content: space-between;
+        font-size: 14px;
+        color: #ccc;
+      }
+
+      .driver-card .vehicle-info .plate {
+        background: #ffd700;
+        color: #000;
+        padding: 2px 8px;
+        border-radius: 4px;
+        font-weight: bold;
+      }
+
+      .driver-card .driver-actions {
+        display: flex;
+        gap: 10px;
+      }
+
+      .driver-card .driver-actions button {
+        flex: 1;
+        padding: 12px;
+        border: none;
+        border-radius: 8px;
+        font-size: 14px;
+        font-family: "Tajawal", sans-serif;
+        cursor: pointer;
+        transition: transform 0.2s, opacity 0.2s;
+      }
+
+      .driver-card .driver-actions button:hover {
+        opacity: 0.9;
+      }
+
+      .driver-card .driver-actions button:active {
+        transform: scale(0.95);
+      }
+
+      .driver-card .call-btn {
+        background: #00d68f;
+        color: white;
+      }
+
+      .driver-card .message-btn {
+        background: rgba(255, 255, 255, 0.2);
+        color: white;
+      }
+    </style>
+
+    <script src="js/Customer.js" defer></script>
+  </head>
+  <body>
+    <!-- Header -->
+    <header class="header">
+      <div class="header-logo">
+        <div class="header-logo-icon">
+          <svg viewBox="0 0 24 24">
+            <path
+              d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"
+            />
+          </svg>
+        </div>
+        <span class="header-logo-text">ZedoGo</span>
+      </div>
+
+      <div class="header-actions">
+        <div class="user-menu" id="userMenu">
+          <div class="user-avatar" id="userAvatar">م</div>
+          <div class="user-info">
+            <span class="user-name" id="userName">مستخدم</span>
+            <span class="user-role">عميل</span>
+          </div>
+        </div>
+        <button class="logout-btn" onclick="logout()" title="تسجيل الخروج">
+          <svg viewBox="0 0 24 24">
+            <path
+              d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"
+            />
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Container -->
+    <div class="main-container">
+      <!-- Sidebar -->
+      <aside class="sidebar">
+        <div class="request-panel">
+          <h2 class="panel-title">
+            <svg viewBox="0 0 24 24">
+              <path
+                d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"
+              />
+            </svg>
+            طلب رحلة جديدة
+          </h2>
+
+          <!-- Location Inputs -->
+          <div class="location-inputs">
+            <div class="location-connector"></div>
+            <div class="location-input-group">
+              <div class="location-dot pickup"></div>
+              <input
+                type="text"
+                class="location-input"
+                id="pickupInput"
+                placeholder="موقع الانطلاق"
+                readonly
+              />
+              <button
+                class="location-btn"
+                onclick="setPickupFromMap()"
+                title="تحديد على الخريطة"
+              >
+                <svg viewBox="0 0 24 24">
+                  <path
+                    d="M12 8c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm8.94 3c-.46-4.17-3.77-7.48-7.94-7.94V1h-2v2.06C6.83 3.52 3.52 6.83 3.06 11H1v2h2.06c.46 4.17 3.77 7.48 7.94 7.94V23h2v-2.06c4.17-.46 7.48-3.77 7.94-7.94H23v-2h-2.06zM12 19c-3.87 0-7-3.13-7-7s3.13-7 7-7 7 3.13 7 7-3.13 7-7 7z"
+                  />
+                </svg>
+              </button>
+            </div>
+            <div class="location-input-group">
+              <div class="location-dot dropoff"></div>
+              <input
+                type="text"
+                class="location-input"
+                id="dropoffInput"
+                placeholder="موقع الوصول"
+                readonly
+              />
+              <button
+                class="location-btn"
+                onclick="setDropoffFromMap()"
+                title="تحديد على الخريطة"
+              >
+                <svg viewBox="0 0 24 24">
+                  <path
+                    d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"
+                  />
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <!-- Trip Info -->
+          <div class="trip-info" id="tripInfo">
+            <div class="trip-stats">
+              <div class="trip-stat">
+                <div class="trip-stat-value" id="tripDistance">0 كم</div>
+                <div class="trip-stat-label">المسافة</div>
+              </div>
+              <div class="trip-stat">
+                <div class="trip-stat-value" id="tripDuration">0 د</div>
+                <div class="trip-stat-label">الوقت المتوقع</div>
+              </div>
+              <div class="trip-stat">
+                <div class="trip-stat-value" id="tripPrice">0 ل.س</div>
+                <div class="trip-stat-label">التكلفة</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Request Button -->
+          <button
+            class="request-btn"
+            id="requestBtn"
+            onclick="createRequest()"
+            disabled
+          >
+            <svg viewBox="0 0 24 24">
+              <path
+                d="M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11c-.66 0-1.21.42-1.42 1.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99zM6.5 16c-.83 0-1.5-.67-1.5-1.5S5.67 13 6.5 13s1.5.67 1.5 1.5S7.33 16 6.5 16zm11 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zM5 11l1.5-4.5h11L19 11H5z"
+              />
+            </svg>
+            <span>اطلب الآن</span>
+          </button>
+
+          <!-- Active Request -->
+          <div class="active-request" id="activeRequest">
+            <div class="request-status-bar" id="statusBar">
+              <div class="status-indicator" id="statusIndicator"></div>
+              <span class="status-text" id="statusText"
+                >جاري البحث عن سائق...</span
+              >
+            </div>
+
+            <!-- ✅ بطاقة السائق (ثابتة في HTML) -->
+            <div class="driver-card" id="driverCard">
+              <div class="driver-header">
+                <div class="driver-avatar" id="driverCardAvatar">س</div>
+                <div class="driver-details">
+                  <h4 id="driverCardName">اسم السائق</h4>
+                  <div class="driver-rating">
+                    ⭐ <span id="driverCardRating">4.5</span>
+                  </div>
+                </div>
+              </div>
+              <div class="vehicle-info" id="vehicleInfo">
+                <span id="driverCardVehicle">🚗 السيارة</span>
+                <span class="plate" id="driverCardPlate">ABC 123</span>
+              </div>
+              <div class="driver-actions">
+                <button
+                  class="call-btn"
+                  id="callDriverBtn"
+                  onclick="callDriver()"
+                >
+                  📞 اتصال
+                </button>
+                <button
+                  class="message-btn"
+                  id="messageDriverBtn"
+                  onclick="messageDriver()"
+                >
+                  💬 رسالة
+                </button>
+              </div>
+            </div>
+
+            <div class="request-details">
+              <button class="cancel-btn" onclick="cancelRequest()">
+                إلغاء الطلب
+              </button>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Map -->
+      <div class="map-container">
+        <div id="map"></div>
+        <div class="map-controls">
+          <button
+            class="map-control-btn"
+            onclick="getCurrentLocation()"
+            title="موقعي الحالي"
+          >
+            <svg viewBox="0 0 24 24">
+              <path
+                d="M12 8c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm8.94 3c-.46-4.17-3.77-7.48-7.94-7.94V1h-2v2.06C6.83 3.52 3.52 6.83 3.06 11H1v2h2.06c.46 4.17 3.77 7.48 7.94 7.94V23h2v-2.06c4.17-.46 7.48-3.77 7.94-7.94H23v-2h-2.06zM12 19c-3.87 0-7-3.13-7-7s3.13-7 7-7 7 3.13 7 7-3.13 7-7 7z"
+              />
+            </svg>
+          </button>
+          <button class="map-control-btn" onclick="zoomIn()" title="تكبير">
+            <svg viewBox="0 0 24 24">
+              <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
+            </svg>
+          </button>
+          <button class="map-control-btn" onclick="zoomOut()" title="تصغير">
+            <svg viewBox="0 0 24 24"><path d="M19 13H5v-2h14v2z" /></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast">
+      <svg viewBox="0 0 24 24">
+        <path
+          d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"
+        />
+      </svg>
+      <span id="toastText"></span>
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  </body>
+</html>

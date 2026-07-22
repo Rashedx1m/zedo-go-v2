@@ -1,0 +1,29 @@
+# Build results
+[Bb]in/
+[Oo]bj/
+[Dd]ebug/
+[Rr]elease/
+*.user
+
+# .NET
+project.lock.json
+project.assets.json
+*.nuget.props
+*.nuget.targets
+
+# SQLite database files (generated at runtime)
+*.db
+*.db-shm
+*.db-wal
+
+# Rider / Visual Studio / VS Code
+.vs/
+.idea/
+.vscode/
+
+# Local NuGet config with machine-specific sources
+NuGet.config
+
+# OS files
+Thumbs.db
+.DS_Store

@@ -1,0 +1,318 @@
+﻿<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ZedoGo - إنشاء حساب جديد</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800&family=Cairo:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/Register.css" />
+    <script src="js/Register.js" defer></script>
+  </head>
+  <body>
+    <div class="bg-animation"></div>
+
+    <div class="register-container">
+      <!-- Logo -->
+      <div class="logo-section">
+        <div class="logo">
+          <div class="logo-icon">
+            <svg viewBox="0 0 24 24">
+              <path
+                d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"
+              />
+            </svg>
+          </div>
+          <span class="logo-text">ZedoGo</span>
+        </div>
+      </div>
+
+      <!-- Register Card -->
+      <div class="register-card">
+        <div class="card-header">
+          <h1 class="card-title">إنشاء حساب جديد</h1>
+          <p class="card-subtitle">انضم إلينا واستمتع بخدماتنا</p>
+        </div>
+
+        <!-- Registration Type Tabs -->
+        <div class="reg-type-tabs">
+          <button
+            class="reg-type-tab active"
+            data-type="customer"
+            onclick="switchRegType('customer')"
+          >
+            <svg viewBox="0 0 24 24">
+              <path
+                d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"
+              />
+            </svg>
+            <span>عميل</span>
+          </button>
+          <button
+            class="reg-type-tab"
+            data-type="driver"
+            onclick="switchRegType('driver')"
+          >
+            <svg viewBox="0 0 24 24">
+              <path
+                d="M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11c-.66 0-1.21.42-1.42 1.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99zM6.5 16c-.83 0-1.5-.67-1.5-1.5S5.67 13 6.5 13s1.5.67 1.5 1.5S7.33 16 6.5 16zm11 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zM5 11l1.5-4.5h11L19 11H5z"
+              />
+            </svg>
+            <span>سائق</span>
+          </button>
+        </div>
+
+        <!-- Messages -->
+        <div class="message error" id="errorMessage">
+          <svg viewBox="0 0 24 24">
+            <path
+              d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"
+            />
+          </svg>
+          <span id="errorText"></span>
+        </div>
+
+        <div class="message success" id="successMessage">
+          <svg viewBox="0 0 24 24">
+            <path
+              d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"
+            />
+          </svg>
+          <span id="successText"></span>
+        </div>
+
+        <form id="registerForm">
+          <input type="hidden" id="regType" value="customer" />
+
+          <!-- Full Name -->
+          <div class="form-group">
+            <label class="form-label"
+              >الاسم الكامل <span class="required">*</span></label
+            >
+            <div class="input-wrapper">
+              <input
+                type="text"
+                class="form-input"
+                id="fullName"
+                placeholder="أدخل اسمك الكامل"
+                required
+              />
+              <svg class="input-icon" viewBox="0 0 24 24">
+                <path
+                  d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"
+                />
+              </svg>
+            </div>
+          </div>
+
+          <!-- Email & Phone -->
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label"
+                >البريد الإلكتروني <span class="required">*</span></label
+              >
+              <div class="input-wrapper">
+                <input
+                  type="email"
+                  class="form-input"
+                  id="email"
+                  placeholder="example@email.com"
+                  required
+                />
+                <svg class="input-icon" viewBox="0 0 24 24">
+                  <path
+                    d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"
+                  />
+                </svg>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">رقم الهاتف</label>
+              <div class="input-wrapper">
+                <input
+                  type="tel"
+                  class="form-input"
+                  id="phone"
+                  placeholder="05xxxxxxxx"
+                />
+                <svg class="input-icon" viewBox="0 0 24 24">
+                  <path
+                    d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"
+                  />
+                </svg>
+              </div>
+            </div>
+          </div>
+
+          <!-- Password -->
+          <div class="form-group">
+            <label class="form-label"
+              >كلمة المرور <span class="required">*</span></label
+            >
+            <div class="input-wrapper">
+              <input
+                type="password"
+                class="form-input"
+                id="password"
+                placeholder="أدخل كلمة مرور قوية"
+                required
+                oninput="checkPasswordStrength()"
+              />
+              <svg class="input-icon" viewBox="0 0 24 24">
+                <path
+                  d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"
+                />
+              </svg>
+            </div>
+            <div class="password-strength">
+              <div class="strength-bar">
+                <div class="strength-fill" id="strengthFill"></div>
+              </div>
+              <span class="strength-text" id="strengthText"></span>
+            </div>
+          </div>
+
+          <!-- Confirm Password -->
+          <div class="form-group">
+            <label class="form-label"
+              >تأكيد كلمة المرور <span class="required">*</span></label
+            >
+            <div class="input-wrapper">
+              <input
+                type="password"
+                class="form-input"
+                id="confirmPassword"
+                placeholder="أعد إدخال كلمة المرور"
+                required
+              />
+              <svg class="input-icon" viewBox="0 0 24 24">
+                <path
+                  d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"
+                />
+              </svg>
+            </div>
+          </div>
+
+          <!-- Driver Fields -->
+          <div class="driver-fields" id="driverFields">
+            <div class="section-title">
+              <svg viewBox="0 0 24 24">
+                <path
+                  d="M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11c-.66 0-1.21.42-1.42 1.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99z"
+                />
+              </svg>
+              معلومات السيارة
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label"
+                  >موديل السيارة <span class="required">*</span></label
+                >
+                <div class="input-wrapper">
+                  <input
+                    type="text"
+                    class="form-input"
+                    id="carModel"
+                    placeholder="مثال: تويوتا كامري 2022"
+                  />
+                  <svg class="input-icon" viewBox="0 0 24 24">
+                    <path
+                      d="M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11c-.66 0-1.21.42-1.42 1.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99z"
+                    />
+                  </svg>
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="form-label"
+                  >لون السيارة <span class="required">*</span></label
+                >
+                <div class="input-wrapper">
+                  <input
+                    type="text"
+                    class="form-input"
+                    id="carColor"
+                    placeholder="مثال: أبيض"
+                  />
+                  <svg class="input-icon" viewBox="0 0 24 24">
+                    <path
+                      d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9c.83 0 1.5-.67 1.5-1.5 0-.39-.15-.74-.39-1.01-.23-.26-.38-.61-.38-.99 0-.83.67-1.5 1.5-1.5H16c2.76 0 5-2.24 5-5 0-4.42-4.03-8-9-8zm-5.5 9c-.83 0-1.5-.67-1.5-1.5S5.67 9 6.5 9 8 9.67 8 10.5 7.33 12 6.5 12zm3-4C8.67 8 8 7.33 8 6.5S8.67 5 9.5 5s1.5.67 1.5 1.5S10.33 8 9.5 8zm5 0c-.83 0-1.5-.67-1.5-1.5S13.67 5 14.5 5s1.5.67 1.5 1.5S15.33 8 14.5 8zm3 4c-.83 0-1.5-.67-1.5-1.5S16.67 9 17.5 9s1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"
+                    />
+                  </svg>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label"
+                  >رقم اللوحة <span class="required">*</span></label
+                >
+                <div class="input-wrapper">
+                  <input
+                    type="text"
+                    class="form-input"
+                    id="plateNumber"
+                    placeholder="مثال: أ ب ج 1234"
+                  />
+                  <svg class="input-icon" viewBox="0 0 24 24">
+                    <path
+                      d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 14H4V6h16v12z"
+                    />
+                  </svg>
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="form-label"
+                  >رقم رخصة القيادة <span class="required">*</span></label
+                >
+                <div class="input-wrapper">
+                  <input
+                    type="text"
+                    class="form-input"
+                    id="licenseNumber"
+                    placeholder="رقم الرخصة"
+                  />
+                  <svg class="input-icon" viewBox="0 0 24 24">
+                    <path
+                      d="M20 7h-5V4c0-1.1-.9-2-2-2h-2c-1.1 0-2 .9-2 2v3H4c-1.1 0-2 .9-2 2v11c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V9c0-1.1-.9-2-2-2zM9 12c.83 0 1.5.67 1.5 1.5S9.83 15 9 15s-1.5-.67-1.5-1.5S8.17 12 9 12zm3 6H6v-.75c0-1 2-1.5 3-1.5s3 .5 3 1.5V18zm1-9h-2V4h2v5zm5 7.5h-4V15h4v1.5zm0-3h-4V12h4v1.5z"
+                    />
+                  </svg>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Terms -->
+          <div class="terms-group">
+            <label class="terms-label">
+              <input type="checkbox" id="terms" required />
+              <span class="checkbox-custom">
+                <svg viewBox="0 0 24 24">
+                  <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
+                </svg>
+              </span>
+              <span class="terms-text">
+                أوافق على <a href="terms.html">شروط الاستخدام</a> و
+                <a href="privacy.html">سياسة الخصوصية</a>
+              </span>
+            </label>
+          </div>
+
+          <!-- Submit -->
+          <button type="submit" class="btn-submit" id="submitBtn">
+            <span class="btn-text">إنشاء الحساب</span>
+            <div class="btn-loading"></div>
+          </button>
+        </form>
+
+        <!-- Login Link -->
+        <div class="login-link">
+          <p>لديك حساب بالفعل؟ <a href="login.html">سجل الدخول</a></p>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

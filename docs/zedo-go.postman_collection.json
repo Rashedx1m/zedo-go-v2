@@ -1,0 +1,239 @@
+{
+  "info": {
+    "name": "Zedo Go API",
+    "description": "REST API collection for the Zedo Go taxi/ride-hailing backend.\n\nUsage:\n1. Set the `baseUrl` variable (default http://localhost:5000).\n2. Run Auth > Register Customer, then Auth > Login. The login response's token is saved automatically into `token` and reused by all authorized requests.\n3. Optionally run Auth > Register Driver User, Drivers > Register Driver, and Pricings > Create + Activate before creating a ride.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }]
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:5000" },
+    { "key": "token", "value": "" },
+    { "key": "customerId", "value": "1" },
+    { "key": "driverId", "value": "1" },
+    { "key": "driverUserId", "value": "2" },
+    { "key": "requestId", "value": "1" },
+    { "key": "pricingId", "value": "1" }
+  ],
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Register Customer",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"fullName\": \"Ahmed Ali\",\n  \"email\": \"ahmed@test.com\",\n  \"phone\": \"0791234567\",\n  \"password\": \"Pass1234\",\n  \"role\": 1\n}" },
+            "url": { "raw": "{{baseUrl}}/api/auth/register", "host": ["{{baseUrl}}"], "path": ["api", "auth", "register"] }
+          }
+        },
+        {
+          "name": "Register Driver User",
+          "event": [
+            { "listen": "test", "script": { "type": "text/javascript", "exec": [
+              "const r = pm.response.json();",
+              "if (r && r.data) pm.collectionVariables.set('driverUserId', r.data);"
+            ] } }
+          ],
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"fullName\": \"Sami Driver\",\n  \"email\": \"sami@test.com\",\n  \"phone\": \"0797654321\",\n  \"password\": \"Pass1234\",\n  \"role\": 2\n}" },
+            "url": { "raw": "{{baseUrl}}/api/auth/register", "host": ["{{baseUrl}}"], "path": ["api", "auth", "register"] }
+          }
+        },
+        {
+          "name": "Login",
+          "event": [
+            { "listen": "test", "script": { "type": "text/javascript", "exec": [
+              "const r = pm.response.json();",
+              "if (r && r.data) {",
+              "  if (r.data.token) pm.collectionVariables.set('token', r.data.token);",
+              "  if (r.data.customerId) pm.collectionVariables.set('customerId', r.data.customerId);",
+              "  if (r.data.driverId) pm.collectionVariables.set('driverId', r.data.driverId);",
+              "}"
+            ] } }
+          ],
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"email\": \"ahmed@test.com\",\n  \"password\": \"Pass1234\"\n}" },
+            "url": { "raw": "{{baseUrl}}/api/auth/login", "host": ["{{baseUrl}}"], "path": ["api", "auth", "login"] }
+          }
+        },
+        {
+          "name": "Change Password",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"currentPassword\": \"Pass1234\",\n  \"newPassword\": \"NewPass1234\"\n}" },
+            "url": { "raw": "{{baseUrl}}/api/auth/change-password", "host": ["{{baseUrl}}"], "path": ["api", "auth", "change-password"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Users",
+      "item": [
+        { "name": "Get All Users", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/users", "host": ["{{baseUrl}}"], "path": ["api", "users"] } } },
+        { "name": "Get User By Id", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/users/1", "host": ["{{baseUrl}}"], "path": ["api", "users", "1"] } } },
+        { "name": "Get User By Email", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/users/email/ahmed@test.com", "host": ["{{baseUrl}}"], "path": ["api", "users", "email", "ahmed@test.com"] } } },
+        { "name": "Get Users By Role", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/users/role/1", "host": ["{{baseUrl}}"], "path": ["api", "users", "role", "1"] } } },
+        { "name": "Activate User", "request": { "method": "POST", "url": { "raw": "{{baseUrl}}/api/users/1/activate", "host": ["{{baseUrl}}"], "path": ["api", "users", "1", "activate"] } } },
+        { "name": "Deactivate User", "request": { "method": "POST", "url": { "raw": "{{baseUrl}}/api/users/1/deactivate", "host": ["{{baseUrl}}"], "path": ["api", "users", "1", "deactivate"] } } }
+      ]
+    },
+    {
+      "name": "Customers",
+      "item": [
+        { "name": "Get All Customers", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/customers", "host": ["{{baseUrl}}"], "path": ["api", "customers"] } } },
+        { "name": "Get Customer By Id", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/customers/{{customerId}}", "host": ["{{baseUrl}}"], "path": ["api", "customers", "{{customerId}}"] } } },
+        { "name": "Get Customer By UserId", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/customers/user/1", "host": ["{{baseUrl}}"], "path": ["api", "customers", "user", "1"] } } }
+      ]
+    },
+    {
+      "name": "Drivers",
+      "item": [
+        {
+          "name": "Register Driver",
+          "event": [
+            { "listen": "test", "script": { "type": "text/javascript", "exec": [
+              "const r = pm.response.json();",
+              "if (r && r.data) pm.collectionVariables.set('driverId', r.data);"
+            ] } }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"userId\": {{driverUserId}},\n  \"carModel\": \"Toyota Camry\",\n  \"carColor\": \"White\",\n  \"plateNumber\": \"ABC-123\",\n  \"licenseNumber\": \"LIC-999\"\n}" },
+            "url": { "raw": "{{baseUrl}}/api/drivers/register", "host": ["{{baseUrl}}"], "path": ["api", "drivers", "register"] }
+          }
+        },
+        { "name": "Get All Drivers", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/drivers", "host": ["{{baseUrl}}"], "path": ["api", "drivers"] } } },
+        { "name": "Get Driver By Id", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/drivers/{{driverId}}", "host": ["{{baseUrl}}"], "path": ["api", "drivers", "{{driverId}}"] } } },
+        { "name": "Get Driver By UserId", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/drivers/user/{{driverUserId}}", "host": ["{{baseUrl}}"], "path": ["api", "drivers", "user", "{{driverUserId}}"] } } },
+        { "name": "Get Available Drivers", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/drivers/available", "host": ["{{baseUrl}}"], "path": ["api", "drivers", "available"] } } },
+        { "name": "Get Nearby Drivers", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/drivers/nearby?lat=31.9539&lon=35.9106&radiusKm=5", "host": ["{{baseUrl}}"], "path": ["api", "drivers", "nearby"], "query": [ { "key": "lat", "value": "31.9539" }, { "key": "lon", "value": "35.9106" }, { "key": "radiusKm", "value": "5" } ] } } },
+        {
+          "name": "Update Driver",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"carModel\": \"Toyota Corolla\",\n  \"carColor\": \"Black\",\n  \"plateNumber\": \"ABC-123\"\n}" },
+            "url": { "raw": "{{baseUrl}}/api/drivers/{{driverId}}", "host": ["{{baseUrl}}"], "path": ["api", "drivers", "{{driverId}}"] }
+          }
+        },
+        { "name": "Go Online", "request": { "method": "POST", "url": { "raw": "{{baseUrl}}/api/drivers/{{driverId}}/online", "host": ["{{baseUrl}}"], "path": ["api", "drivers", "{{driverId}}", "online"] } } },
+        { "name": "Go Offline", "request": { "method": "POST", "url": { "raw": "{{baseUrl}}/api/drivers/{{driverId}}/offline", "host": ["{{baseUrl}}"], "path": ["api", "drivers", "{{driverId}}", "offline"] } } },
+        {
+          "name": "Update Location",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"latitude\": 31.9539,\n  \"longitude\": 35.9106\n}" },
+            "url": { "raw": "{{baseUrl}}/api/drivers/{{driverId}}/location", "host": ["{{baseUrl}}"], "path": ["api", "drivers", "{{driverId}}", "location"] }
+          }
+        },
+        { "name": "Get Location", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/drivers/{{driverId}}/location", "host": ["{{baseUrl}}"], "path": ["api", "drivers", "{{driverId}}", "location"] } } }
+      ]
+    },
+    {
+      "name": "Pricings",
+      "item": [
+        { "name": "Get All Pricings", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/pricings", "host": ["{{baseUrl}}"], "path": ["api", "pricings"] } } },
+        { "name": "Get Pricing By Id", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/pricings/{{pricingId}}", "host": ["{{baseUrl}}"], "path": ["api", "pricings", "{{pricingId}}"] } } },
+        { "name": "Get Active Pricing", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/pricings/active", "host": ["{{baseUrl}}"], "path": ["api", "pricings", "active"] } } },
+        {
+          "name": "Create Pricing",
+          "event": [
+            { "listen": "test", "script": { "type": "text/javascript", "exec": [
+              "const r = pm.response.json();",
+              "if (r && r.data) pm.collectionVariables.set('pricingId', r.data);"
+            ] } }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"name\": \"Standard\",\n  \"baseFare\": 5.0,\n  \"pricePerKm\": 2.5,\n  \"pricePerMinute\": 0.5,\n  \"minimumFare\": 10.0\n}" },
+            "url": { "raw": "{{baseUrl}}/api/pricings", "host": ["{{baseUrl}}"], "path": ["api", "pricings"] }
+          }
+        },
+        { "name": "Activate Pricing", "request": { "method": "POST", "url": { "raw": "{{baseUrl}}/api/pricings/{{pricingId}}/activate", "host": ["{{baseUrl}}"], "path": ["api", "pricings", "{{pricingId}}", "activate"] } } },
+        { "name": "Deactivate Pricing", "request": { "method": "POST", "url": { "raw": "{{baseUrl}}/api/pricings/{{pricingId}}/deactivate", "host": ["{{baseUrl}}"], "path": ["api", "pricings", "{{pricingId}}", "deactivate"] } } },
+        { "name": "Estimate Cost", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/pricings/estimate?pickupLat=31.9539&pickupLon=35.9106&dropLat=31.9800&dropLon=35.9300", "host": ["{{baseUrl}}"], "path": ["api", "pricings", "estimate"], "query": [ { "key": "pickupLat", "value": "31.9539" }, { "key": "pickupLon", "value": "35.9106" }, { "key": "dropLat", "value": "31.9800" }, { "key": "dropLon", "value": "35.9300" } ] } } }
+      ]
+    },
+    {
+      "name": "Requests",
+      "item": [
+        {
+          "name": "Create Request (current customer)",
+          "event": [
+            { "listen": "test", "script": { "type": "text/javascript", "exec": [
+              "const r = pm.response.json();",
+              "if (r && r.data) pm.collectionVariables.set('requestId', r.data);"
+            ] } }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"pickupLatitude\": 31.9539,\n  \"pickupLongitude\": 35.9106,\n  \"dropLatitude\": 31.9800,\n  \"dropLongitude\": 35.9300\n}" },
+            "url": { "raw": "{{baseUrl}}/api/requests", "host": ["{{baseUrl}}"], "path": ["api", "requests"] }
+          }
+        },
+        {
+          "name": "Create Request For Customer",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"pickupLatitude\": 31.9539,\n  \"pickupLongitude\": 35.9106,\n  \"dropLatitude\": 31.9800,\n  \"dropLongitude\": 35.9300\n}" },
+            "url": { "raw": "{{baseUrl}}/api/requests/customer/{{customerId}}", "host": ["{{baseUrl}}"], "path": ["api", "requests", "customer", "{{customerId}}"] }
+          }
+        },
+        { "name": "Get Request By Id", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/requests/{{requestId}}", "host": ["{{baseUrl}}"], "path": ["api", "requests", "{{requestId}}"] } } },
+        { "name": "Get Request Full Info", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/requests/{{requestId}}/full", "host": ["{{baseUrl}}"], "path": ["api", "requests", "{{requestId}}", "full"] } } },
+        { "name": "Get Requests By Customer", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/requests/customer/{{customerId}}", "host": ["{{baseUrl}}"], "path": ["api", "requests", "customer", "{{customerId}}"] } } },
+        { "name": "Get Active Request By Customer", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/requests/customer/{{customerId}}/active", "host": ["{{baseUrl}}"], "path": ["api", "requests", "customer", "{{customerId}}", "active"] } } },
+        { "name": "Get Requests By Driver", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/requests/driver/{{driverId}}", "host": ["{{baseUrl}}"], "path": ["api", "requests", "driver", "{{driverId}}"] } } },
+        { "name": "Get Active Request By Driver", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/requests/driver/{{driverId}}/active", "host": ["{{baseUrl}}"], "path": ["api", "requests", "driver", "{{driverId}}", "active"] } } },
+        { "name": "Get Requests By Status", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/requests/status/1", "host": ["{{baseUrl}}"], "path": ["api", "requests", "status", "1"] } } },
+        { "name": "Accept Request", "request": { "method": "POST", "url": { "raw": "{{baseUrl}}/api/requests/{{requestId}}/accept?driverId={{driverId}}", "host": ["{{baseUrl}}"], "path": ["api", "requests", "{{requestId}}", "accept"], "query": [ { "key": "driverId", "value": "{{driverId}}" } ] } } },
+        { "name": "Driver Arrived", "request": { "method": "POST", "url": { "raw": "{{baseUrl}}/api/requests/{{requestId}}/arrived", "host": ["{{baseUrl}}"], "path": ["api", "requests", "{{requestId}}", "arrived"] } } },
+        { "name": "Start Ride", "request": { "method": "POST", "url": { "raw": "{{baseUrl}}/api/requests/{{requestId}}/start", "host": ["{{baseUrl}}"], "path": ["api", "requests", "{{requestId}}", "start"] } } },
+        { "name": "Complete Ride", "request": { "method": "POST", "url": { "raw": "{{baseUrl}}/api/requests/{{requestId}}/complete?paymentMethod=1", "host": ["{{baseUrl}}"], "path": ["api", "requests", "{{requestId}}", "complete"], "query": [ { "key": "paymentMethod", "value": "1" } ] } } },
+        { "name": "Cancel Request", "request": { "method": "POST", "url": { "raw": "{{baseUrl}}/api/requests/{{requestId}}/cancel?reason=Changed my mind", "host": ["{{baseUrl}}"], "path": ["api", "requests", "{{requestId}}", "cancel"], "query": [ { "key": "reason", "value": "Changed my mind" } ] } } },
+        { "name": "Nearby Requests For Driver", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/requests/nearby?driverId={{driverId}}&radiusKm=10", "host": ["{{baseUrl}}"], "path": ["api", "requests", "nearby"], "query": [ { "key": "driverId", "value": "{{driverId}}" }, { "key": "radiusKm", "value": "10" } ] } } }
+      ]
+    },
+    {
+      "name": "Payments",
+      "item": [
+        { "name": "Get Payment By Id", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/payments/1", "host": ["{{baseUrl}}"], "path": ["api", "payments", "1"] } } },
+        { "name": "Get Payment By Request", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/payments/request/{{requestId}}", "host": ["{{baseUrl}}"], "path": ["api", "payments", "request", "{{requestId}}"] } } },
+        {
+          "name": "Process Payment",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"requestId\": {{requestId}},\n  \"method\": 1\n}" },
+            "url": { "raw": "{{baseUrl}}/api/payments/process", "host": ["{{baseUrl}}"], "path": ["api", "payments", "process"] }
+          }
+        },
+        { "name": "Driver Earnings", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/payments/driver/{{driverId}}/earnings", "host": ["{{baseUrl}}"], "path": ["api", "payments", "driver", "{{driverId}}", "earnings"] } } },
+        { "name": "Company Revenue", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/payments/company/revenue", "host": ["{{baseUrl}}"], "path": ["api", "payments", "company", "revenue"] } } }
+      ]
+    },
+    {
+      "name": "Dashboard",
+      "item": [
+        { "name": "Get Stats", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/dashboard/stats", "host": ["{{baseUrl}}"], "path": ["api", "dashboard", "stats"] } } }
+      ]
+    }
+  ]
+}
