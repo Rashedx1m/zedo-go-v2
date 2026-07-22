@@ -1,5 +1,7 @@
 # 🚕 Zedo Go
 
+[![build](https://github.com/Rashedx1m/zedo-go-v2/actions/workflows/build.yml/badge.svg)](https://github.com/Rashedx1m/zedo-go-v2/actions/workflows/build.yml)
+
 **Language:** English · [العربية](README.ar.md)
 
 A ride‑hailing (taxi booking) backend API built with **.NET 10** following **Clean Architecture**. It ships with a small static frontend (customer / driver / admin dashboards) and uses **SQLite** by default so it runs with zero database setup.
@@ -29,6 +31,28 @@ Application    → Services, DTOs, interfaces, Result pattern, Mappers (use case
 Domain         → Entities, Enums, repository interfaces             (core, no dependencies)
 Infrastructure → EF Core DbContext, repositories, UnitOfWork, migrations (data / external)
 ```
+
+```mermaid
+flowchart TB
+    API["API<br/>(Controllers, Program.cs)"]
+    APP["Application<br/>(Services, DTOs, Interfaces)"]
+    DOM["Domain<br/>(Entities, Enums, Repository Interfaces)"]
+    INF["Infrastructure<br/>(EF Core, Repositories, UnitOfWork)"]
+
+    API --> APP
+    API --> INF
+    APP --> DOM
+    INF --> APP
+    INF -. implements .-> DOM
+
+    classDef core fill:#e8f5e9,stroke:#2e7d32,color:#1b5e20;
+    classDef outer fill:#e3f2fd,stroke:#1565c0,color:#0d47a1;
+    class DOM core;
+    class API,APP,INF outer;
+```
+
+> Dependencies point inward toward `Domain`, which depends on nothing.
+> `Infrastructure` implements the repository interfaces declared in `Domain`.
 
 Key patterns: **Repository + Unit of Work**, **Result** for explicit success/failure, **DTOs** to decouple the API from entities, and constructor **dependency injection** throughout.
 

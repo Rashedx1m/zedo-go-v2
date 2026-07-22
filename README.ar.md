@@ -1,5 +1,7 @@
 # 🚕 Zedo Go
 
+[![build](https://github.com/Rashedx1m/zedo-go-v2/actions/workflows/build.yml/badge.svg)](https://github.com/Rashedx1m/zedo-go-v2/actions/workflows/build.yml)
+
 **اللغة:** العربية · [English](README.md)
 
 واجهة برمجية (Backend API) لتطبيق حجز سيارات الأجرة، مبنية بـ **.NET 10** وفق **المعمارية النظيفة (Clean Architecture)**. يأتي معها واجهة أمامية ثابتة بسيطة (لوحات العميل / السائق / الأدمن)، ويستخدم **SQLite** افتراضياً بحيث يعمل دون أي إعداد لقاعدة بيانات.
@@ -29,6 +31,28 @@ Application    → الخدمات، DTOs، الواجهات، نمط Result، ا
 Domain         → الكيانات، التعدادات، واجهات المستودعات               (الأساس، بلا اعتماديات)
 Infrastructure → EF Core DbContext، المستودعات، UnitOfWork، الهجرات   (البيانات/الخارجي)
 ```
+
+```mermaid
+flowchart TB
+    API["API<br/>(Controllers, Program.cs)"]
+    APP["Application<br/>(Services, DTOs, Interfaces)"]
+    DOM["Domain<br/>(Entities, Enums, Repository Interfaces)"]
+    INF["Infrastructure<br/>(EF Core, Repositories, UnitOfWork)"]
+
+    API --> APP
+    API --> INF
+    APP --> DOM
+    INF --> APP
+    INF -. implements .-> DOM
+
+    classDef core fill:#e8f5e9,stroke:#2e7d32,color:#1b5e20;
+    classDef outer fill:#e3f2fd,stroke:#1565c0,color:#0d47a1;
+    class DOM core;
+    class API,APP,INF outer;
+```
+
+> الاعتماديات تتجه إلى الداخل نحو `Domain` الذي لا يعتمد على شيء.
+> و`Infrastructure` تنفّذ واجهات المستودعات المعرّفة في `Domain`.
 
 أنماط أساسية: **Repository + Unit of Work**، ونمط **Result** لتمثيل النجاح/الفشل صراحةً، و**DTOs** لفصل الـ API عن الكيانات، و**حقن الاعتماديات** عبر المُنشِئات.
 
